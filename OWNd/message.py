@@ -1825,6 +1825,27 @@ class OWNHeatingCommand(OWNCommand):
         return cls.set_mode(where=where, mode=CLIMATE_MODE_OFF, standalone=standalone)
 
     @classmethod
+    def set_actuator_on(cls, where):
+        # where dovrebbe essere nel formato Z#N, es. "9#1"
+        message = cls(f"*#4*{where}*#20*1##") # Comando Scrittura Dimensione
+        message._human_readable_log = f"Switching ON actuator {where}."
+        return message
+
+    @classmethod
+    def set_actuator_off(cls, where):
+        # where dovrebbe essere nel formato Z#N, es. "9#1"
+        message = cls(f"*#4*{where}*#20*0##") # Comando Scrittura Dimensione
+        message._human_readable_log = f"Switching OFF actuator {where}."
+        return message
+
+    @classmethod
+    def get_actuator_status(cls, where):
+        # where dovrebbe essere nel formato Z#N, es. "9#1"
+        message = cls(f"*#4*{where}*20##") # Comando Richiesta Dimensione
+        message._human_readable_log = f"Requesting actuator {where} status."
+        return message
+
+    @classmethod
     def set_temperature(cls, where, temperature: float, mode: str, standalone=False):
         central_local = re.compile(r"^#0#\d+$")
         if central_local.match(str(where)):
